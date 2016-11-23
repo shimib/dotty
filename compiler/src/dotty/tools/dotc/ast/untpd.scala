@@ -73,6 +73,7 @@ object untpd extends Trees.Instance[Untyped] with UntypedTreeInfo {
   case class Throw(expr: Tree) extends TermTree
   case class WhileDo(cond: Tree, body: Tree) extends TermTree
   case class DoWhile(body: Tree, cond: Tree) extends TermTree
+  case class CoForYield(name: TermName, tpt: Tree, enums: List[Tree], expr: Tree) extends TermTree
   case class ForYield(enums: List[Tree], expr: Tree) extends TermTree
   case class ForDo(enums: List[Tree], body: Tree) extends TermTree
   case class GenFrom(pat: Tree, expr: Tree) extends Tree

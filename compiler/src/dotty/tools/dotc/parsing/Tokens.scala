@@ -49,6 +49,8 @@ abstract class TokensCommon {
   //final val BACKQUOTED_IDENT = 13; enter(BACKQUOTED_IDENT, "identifier", "backquoted ident")
 
   /** alphabetic keywords */
+  // shimi
+  final val COFOR = 19;			   enter(COFOR, "co-for")
   final val IF = 20;               enter(IF, "if")
   final val FOR = 21;              enter(FOR, "for")
   final val ELSE = 22;             enter(ELSE, "else")
@@ -204,7 +206,7 @@ object Tokens extends TokensCommon {
     USCORE, NULL, THIS, SUPER, TRUE, FALSE, RETURN, XMLSTART)
 
   final val canStartExpressionTokens = atomicExprTokens | BitSet(
-    LBRACE, LPAREN, IF, DO, WHILE, FOR, NEW, TRY, THROW)
+    LBRACE, LPAREN, IF, DO, WHILE, FOR, COFOR, NEW, TRY, THROW)
 
   final val canStartTypeTokens = literalTokens | identifierTokens | BitSet(
     THIS, SUPER, USCORE, LPAREN, AT)

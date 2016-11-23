@@ -965,6 +965,8 @@ object desugar {
         makeFor(nme.foreach, nme.foreach, enums, body) orElse tree
       case ForYield(enums, body) =>
         makeFor(nme.map, nme.flatMap, enums, body) orElse tree
+	  case CoForYield(name, tpt, enums, body) =>
+	    makeCoFor(nme.coflatMap ,enums,body) orElse tree
       case PatDef(mods, pats, tpt, rhs) =>
         val pats1 = if (tpt.isEmpty) pats else pats map (Typed(_, tpt))
         flatTree(pats1 map (makePatDef(tree, mods, _, rhs)))

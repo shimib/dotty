@@ -41,6 +41,7 @@ object StdNames {
     final val FALSEkw: N     = kw("false")
     final val FINALkw: N     = kw("final")
     final val FINALLYkw: N   = kw("finally")
+	final val COFORkw: N     = kw("cofor")
     final val FORkw: N       = kw("for")
     final val FORSOMEkw: N   = kw("forSome")
     final val IFkw: N        = kw("if")
@@ -407,6 +408,7 @@ object StdNames {
     val find_ : N               = "find"
     val flagsFromBits : N       = "flagsFromBits"
     val flatMap: N              = "flatMap"
+	val coflatMap: N			= "coflatMap"
     val foreach: N              = "foreach"
     val genericArrayOps: N      = "genericArrayOps"
     val get: N                  = "get"

@@ -510,6 +510,14 @@ object messages {
            |}"""
   }
 
+  case class YieldExpectedInCoForComprehension()(implicit ctx: Context) 
+  extends Message(34) {
+	val kind = "Syntax"
+    val msg = hl"${"yield"} expected"
+	val explanation =
+      hl"""| yield is needed here!!!"""
+  }
+  
   case class YieldOrDoExpectedInForComprehension()(implicit ctx: Context)
   extends Message(19) {
     val kind = "Syntax"

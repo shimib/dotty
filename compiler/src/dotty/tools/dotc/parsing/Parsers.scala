@@ -1047,6 +1047,8 @@ object Parsers {
         atPos(in.skipToken()) { Return(if (isExprIntro) expr() else EmptyTree, EmptyTree) }
       case FOR =>
         forExpr()
+	  case COFOR =>
+	    coforExpr()
       case IMPLICIT =>
         implicitClosure(in.skipToken(), location)
       case _ =>
@@ -1295,6 +1297,27 @@ object Parsers {
     def generatorRest(pat: Tree) =
       atPos(pat.pos.start, accept(LARROW)) { GenFrom(pat, expr()) }
 
+	  
+	/** CoForExpr  ::= `cofor' (`(' arg `)') 
+	 *					{nl} generators()
+     *                {nl} `yield' Expr
+     *            |  `for' Enumerators (`do' Expr | `yield' Expr)
+     */
+	def coforExpr(): Tree = atPos(in.skipToken()) {
+		val name = ident()
+		accept(COLON)
+		val tpt = paramType()
+		
+		newLinesOpt()
+		val enums = enumerators()
+		newLinesOpt()
+		if (in.token == YIELD) { in.nextToken(); CoForYield(name, tpt, enums, expr()) }
+		else {
+			syntaxErrorOrIncomplete(YieldExpectedInCoForComprehension())
+			errorTermTree
+		}
+	}
+	  
     /** ForExpr  ::= `for' (`(' Enumerators `)' | `{' Enumerators `}')
      *                {nl} [`yield'] Expr
      *            |  `for' Enumerators (`do' Expr | `yield' Expr)

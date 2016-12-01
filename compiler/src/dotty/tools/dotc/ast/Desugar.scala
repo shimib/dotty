@@ -778,14 +778,7 @@ object desugar {
 	def makeCoFor(coFlatMapName: TermName ,name: Tree, /*tpt : Tree,*/ enums: List[Tree], body: Tree): Tree = ctx.traceIndented(i"make cofor ${CoForYield(name, /*tpt,*/enums, body)}", show = true) {
 	
 	  
-	  def makeIdPat(pat: Tree): (Tree, Ident) = pat match {
-        case Bind(name, _) => (pat, Ident(name))
-        case id: Ident if isVarPattern(id) && id.name != nme.WILDCARD => (id, id)
-        case Typed(id: Ident, _) if isVarPattern(id) && id.name != nme.WILDCARD => (pat, id)
-        case _ =>
-          val name = ctx.freshName().toTermName
-          (Bind(name, pat), Ident(name))
-      }
+	
 	  
 	   /** Make a function value pat => body.
        *  If pat is a var pattern id: T then this gives (id: T) => body
@@ -798,27 +791,38 @@ object desugar {
           makeCaseLambda(CaseDef(pat, EmptyTree, body) :: Nil, unchecked = false)
       }
 	
-	
-	enums match {
-        case (gen: GenFrom) :: Nil => 
-		      makeLambda(Ident(nme.WILDCARD).withPos(name.pos),    Apply(Select(Ident(nme.WILDCARD), coFlatMapName), makeLambda(name, Block(makePatDef(gen, Modifiers(), gen.pat, gen.expr) :: Nil, body)))  )
+      
+   ///// def genpat(gen: GenFrom, prev: Tree) = makeLambda(prev,    Apply(prev, coFlatMapName), makeLambda(prev, Block(makePatDef(gen, Modifiers(), gen.pat, gen.expr) :: Nil, body)))
         
-		
-		
-          
-		  
-		  
-		  
-		  
-		/*  
+	def inner(name: Tree, enums: List[Tree], body: Tree): Tree = {
+	  enums match {
+        case (gen: GenFrom) :: Nil => 
+		       Block(makePatDef(gen, Modifiers(), gen.pat, Apply(Select(name, coFlatMapName), makeLambda(name, gen.expr))) :: Nil, body)
         case (gen: GenFrom) :: (rest @ (GenFrom(_, _) :: _)) =>
-          val cont = makeFor(mapName, flatMapName, rest, body)
-          Apply(rhsSelect(gen, flatMapName), makeLambda(gen.pat, cont))
-        */
+          val cont = inner(gen.pat , rest, body)
+         Block(makePatDef(gen, Modifiers(), gen.pat,Apply(Select(name, coFlatMapName), makeLambda(name, gen.expr ))) :: Nil , cont)
         case _ =>
           EmptyTree //may happen for erroneous input
       }
+	}
+	
+	val xx = makeLambda(name,    Apply(Select(name, coFlatMapName), makeLambda(name, inner(name, enums, body))))
+	    /*enums match {
+        case (gen: GenFrom) :: Nil => 
+		       Block(makePatDef(gen, Modifiers(), gen.pat, Apply(Select(name, coFlatMapName), makeLambda(name, gen.expr))) :: Nil, body)
+        
 		
+        case (gen: GenFrom) :: (rest @ (GenFrom(_, _) :: _)) =>
+          val cont = makeCoFor(coFlatMapName,  gen.pat , rest, body)
+         val xxxx = makeLambda(name,    Apply(Select(name, coFlatMapName), makeLambda(name, Block(makePatDef(gen, Modifiers(), gen.pat,Apply(Select(name, coFlatMapName), makeLambda(name, gen.expr ))) :: Nil , cont))))
+         println(xxxx.show)
+          xxxx
+        case _ =>
+          EmptyTree //may happen for erroneous input
+      }
+	*/
+println(xx.show)
+xx
 	
 	
 	

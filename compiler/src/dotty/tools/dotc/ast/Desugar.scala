@@ -775,6 +775,54 @@ object desugar {
      *  @param enums        The enumerators in the for expression
      *  @param body         The body of the for expression
      */
+	def makeCoFor(coFlatMapName: TermName ,name: Tree, /*tpt : Tree,*/ enums: List[Tree], body: Tree): Tree = ctx.traceIndented(i"make cofor ${CoForYield(name, /*tpt,*/enums, body)}", show = true) {
+	
+	  
+	  def makeIdPat(pat: Tree): (Tree, Ident) = pat match {
+        case Bind(name, _) => (pat, Ident(name))
+        case id: Ident if isVarPattern(id) && id.name != nme.WILDCARD => (id, id)
+        case Typed(id: Ident, _) if isVarPattern(id) && id.name != nme.WILDCARD => (pat, id)
+        case _ =>
+          val name = ctx.freshName().toTermName
+          (Bind(name, pat), Ident(name))
+      }
+	  
+	   /** Make a function value pat => body.
+       *  If pat is a var pattern id: T then this gives (id: T) => body
+       *  Otherwise this gives { case pat => body }
+       */
+      def makeLambda(pat: Tree, body: Tree): Tree = pat match {
+        case VarPattern(named, tpt) =>
+          Function(derivedValDef(pat, named, tpt, EmptyTree, Modifiers(Param)) :: Nil, body)
+        case _ =>
+          makeCaseLambda(CaseDef(pat, EmptyTree, body) :: Nil, unchecked = false)
+      }
+	
+	
+	enums match {
+        case (gen: GenFrom) :: Nil => 
+		      makeLambda(Ident(nme.WILDCARD).withPos(name.pos),    Apply(Select(Ident(nme.WILDCARD), coFlatMapName), makeLambda(name, Block(makePatDef(gen, Modifiers(), gen.pat, gen.expr) :: Nil, body)))  )
+        
+		
+		
+          
+		  
+		  
+		  
+		  
+		/*  
+        case (gen: GenFrom) :: (rest @ (GenFrom(_, _) :: _)) =>
+          val cont = makeFor(mapName, flatMapName, rest, body)
+          Apply(rhsSelect(gen, flatMapName), makeLambda(gen.pat, cont))
+        */
+        case _ =>
+          EmptyTree //may happen for erroneous input
+      }
+		
+	
+	
+	
+	}
     def makeFor(mapName: TermName, flatMapName: TermName, enums: List[Tree], body: Tree): Tree = ctx.traceIndented(i"make for ${ForYield(enums, body)}", show = true) {
 
       /** Make a function value pat => body.
@@ -965,8 +1013,8 @@ object desugar {
         makeFor(nme.foreach, nme.foreach, enums, body) orElse tree
       case ForYield(enums, body) =>
         makeFor(nme.map, nme.flatMap, enums, body) orElse tree
-	  case CoForYield(name, tpt, enums, body) =>
-	    makeCoFor(nme.coflatMap ,enums,body) orElse tree
+	  case CoForYield(name, /*tpt,*/ enums, body) =>
+	    makeCoFor(nme.coFlatMap ,name, /*tpt,*/enums,body) orElse tree
       case PatDef(mods, pats, tpt, rhs) =>
         val pats1 = if (tpt.isEmpty) pats else pats map (Typed(_, tpt))
         flatTree(pats1 map (makePatDef(tree, mods, _, rhs)))

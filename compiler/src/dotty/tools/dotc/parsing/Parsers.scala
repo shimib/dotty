@@ -1304,14 +1304,15 @@ object Parsers {
      *            |  `for' Enumerators (`do' Expr | `yield' Expr)
      */
 	def coforExpr(): Tree = atPos(in.skipToken()) {
+	  val spos = in.offset
 		val name = ident()
-		accept(COLON)
-		val tpt = paramType()
+		//accept(COLON)
+		//val tpt = toplevelTyp()
 		
 		newLinesOpt()
 		val enums = enumerators()
 		newLinesOpt()
-		if (in.token == YIELD) { in.nextToken(); CoForYield(name, tpt, enums, expr()) }
+		if (in.token == YIELD) { in.nextToken(); CoForYield(Ident(name).withPos(Position(spos)),/* tpt,*/ enums, expr()) }
 		else {
 			syntaxErrorOrIncomplete(YieldExpectedInCoForComprehension())
 			errorTermTree

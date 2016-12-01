@@ -50,7 +50,7 @@ abstract class TokensCommon {
 
   /** alphabetic keywords */
   // shimi
-  final val COFOR = 19;			   enter(COFOR, "co-for")
+  final val COFOR = 19;			   enter(COFOR, "cofor")
   final val IF = 20;               enter(IF, "if")
   final val FOR = 21;              enter(FOR, "for")
   final val ELSE = 22;             enter(ELSE, "else")
@@ -192,7 +192,7 @@ object Tokens extends TokensCommon {
   /** XML mode */
   final val XMLSTART = 96;         enter(XMLSTART, "$XMLSTART$<") // TODO: deprecate
 
-  final val alphaKeywords = tokenRange(IF, INLINE)
+  final val alphaKeywords = tokenRange(COFOR, INLINE)
   final val symbolicKeywords = tokenRange(USCORE, VIEWBOUND)
   final val symbolicTokens = tokenRange(COMMA, VIEWBOUND)
   final val keywords = alphaKeywords | symbolicKeywords
@@ -206,7 +206,7 @@ object Tokens extends TokensCommon {
     USCORE, NULL, THIS, SUPER, TRUE, FALSE, RETURN, XMLSTART)
 
   final val canStartExpressionTokens = atomicExprTokens | BitSet(
-    LBRACE, LPAREN, IF, DO, WHILE, FOR, COFOR, NEW, TRY, THROW)
+    LBRACE, LPAREN, IF, DO, WHILE, FOR, NEW, TRY, THROW)
 
   final val canStartTypeTokens = literalTokens | identifierTokens | BitSet(
     THIS, SUPER, USCORE, LPAREN, AT)

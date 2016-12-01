@@ -408,7 +408,7 @@ object StdNames {
     val find_ : N               = "find"
     val flagsFromBits : N       = "flagsFromBits"
     val flatMap: N              = "flatMap"
-	val coflatMap: N			= "coflatMap"
+	val coFlatMap: N			= "coFlatMap"
     val foreach: N              = "foreach"
     val genericArrayOps: N      = "genericArrayOps"
     val get: N                  = "get"

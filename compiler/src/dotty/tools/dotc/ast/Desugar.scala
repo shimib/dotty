@@ -806,7 +806,10 @@ object desugar {
       }
 	}
 	
-	val xx = makeLambda(name,    Apply(Select(name, coFlatMapName), makeLambda(name, inner(name, enums, body))))
+	//val xx = makeLambda(name,    Apply(Select(name, coFlatMapName), makeLambda(name, inner(name, enums, body))))
+	
+	val xx = makeLambda(name, inner(name, enums, body))
+	
 	    /*enums match {
         case (gen: GenFrom) :: Nil => 
 		       Block(makePatDef(gen, Modifiers(), gen.pat, Apply(Select(name, coFlatMapName), makeLambda(name, gen.expr))) :: Nil, body)
